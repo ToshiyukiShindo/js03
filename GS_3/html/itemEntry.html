@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/itemEntry.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <title>Document</title>
+</head>
+<body>
+    <header class="header">
+        <div class="headerleft">
+            <p>商品情報登録</p>
+        </div>
+        <div class="headerright">
+            <nav class="nav">
+                <ul class="nav__wrapper">
+                  <li class="nav__item"><a href="../html/itemList.html">商品一覧</a></li>
+                  <li class="nav__item"><a href="../html/itemEntry.html">商品情報登録</a></li>
+                  <li class="nav__item"><a href="../html/sales.html">商品販売履歴</a></li>
+                  <li class="nav__item"><a href="../html/salesEntry.html">商品販売登録</a></li>
+                  <li class="nav__item"><a href="../html/inquery.html">お問い合わせ</a></li>
+                </ul>
+              </nav>      
+        </div>
+    </header>
+    <p class="undertext">商品情報のデータベースへの登録を行います。</p>
+    <hr class="headerbottom">    
+
+<!-- ここから本編 -->
+<p class="call" id="call"></p>
+<div class="maintable">
+    <table class="maintablebd">
+        <tr class="code">
+            <td class="tableleft" id="codeleft">Item code　<span class="icon">必須</span></td>
+            <td class="tableright" id="coderight"><input type="text" class="code" id="code" placeholder="item_01"></td>
+        <tr class="category">
+            <td class="tableleft" id="categoryleft">Item category　<span class="icon">必須</span></td>
+            <td class="tableright" id="categoryright"><input type="text" class="category" id="category" placeholder="1/2/3"></td>
+        <tr class="name">
+            <td class="tableleft" id="nameleft">商品名　<span class="icon">必須</span></td>
+            <td class="tableright" id="nameright"><input type="text" class="name" id="name" placeholder="例）ファッションデスク"></td>
+        </tr>
+        <tr class="price">
+            <td class="tableleft" id="priceleft">価格</td>
+            <td class="tableright" id="priceright"><input type="number" class="price" id="price" placeholder="例）10,000"></td>
+        </tr>
+        <tr class="imagepass">
+            <td class="tableleft" id="imageleft">画像URL　
+            <td class="tableright" id="imageright"><input type="text" class="imgpass" id="imgpass" placeholder="例）../img/url.jpg"></td>
+        </tr>
+    </table>
+</div>
+<div class="btnarea">
+    <a class="confirm" id="confirm">save</a>
+    <a class="reset" id="reset">reset</a>
+</div>
+<p class="undertext3">※Saveボタンを押していただいたタイミングで入力されたデータが登録されます。</p>
+    <footer class="header">
+    </footer>
+
+    <script src="../js/itemEntrysupport.js"></script>
+    <script src="../js/call.js"></script>
+    <script type="module">
+
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCgZAqi3YGI2B2k5bWU3j_IHZa11ql_J_I",
+  databaseURL: "https://gsdemo-2619a-default-rtdb.asia-southeast1.firebasedatabase.app",
+  authDomain: "gsdemo-2619a.firebaseapp.com",
+  projectId: "gsdemo-2619a",
+  storageBucket: "gsdemo-2619a.appspot.com",
+  messagingSenderId: "887499708285",
+  appId: "1:887499708285:web:2855d668063b9c9bf69e14",
+  measurementId: "G-2BV53M4HLK"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const itemCode = document.getElementById('code');
+const itemCategory = document.getElementById('category');
+const itemName = document.getElementById('name');
+const itemPrice = document.getElementById('price');
+const itemUrl = document.getElementById('imgpass');
+const saveBtn = document.getElementById('confirm');
+
+import { collection, addDoc, setDoc, doc, Timestamp, updateDoc, getDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+
+saveBtn.addEventListener('click',()=>{
+const docData2 = {
+    category: `${itemCategory.value}`,
+    itemname: `${itemName.value}`,
+    itemprice: `${itemPrice.value}`,
+    itemurl: `${itemUrl.value}`
+}
+setDoc(doc(db, "Item", `${itemCode.value}`), docData2);
+});
+
+    </script>
+</body>
+</html>

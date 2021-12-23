@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/itemList.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <title>Document</title>
+</head>
+<body>
+
+    <!-- ヘッダーエリア -->
+    <header class="header">
+        <div class="headerleft">
+            <p>商品販売履歴</p>
+        </div>
+        <div class="headerright">
+            <nav class="nav">
+                <ul class="nav__wrapper">
+                  <li class="nav__item"><a href="../html/itemList.html">商品一覧</a></li>
+                  <li class="nav__item"><a href="../html/itemEntry.html">商品情報登録</a></li>
+                  <li class="nav__item"><a href="../html/sales.html">商品販売履歴</a></li>
+                  <li class="nav__item"><a href="../html/salesEntry.html">商品販売登録</a></li>
+                  <li class="nav__item"><a href="../html/inquery.html">お問い合わせ</a></li>
+                </ul>
+              </nav>      
+        </div>
+    </header>
+    <p class="undertext">商品の販売履歴一覧です。</p>
+    <hr class="headerbottom">    
+
+<!-- ここから本編 -->
+<p class="call" id="call"></p>
+<button type="button" class="btn btn-dark mt-2 mb-4" id="download">CSV download</button>
+
+<table class="table" id="mainlist">
+    <thead id="listhead">
+      <tr>
+          <th scope="col">Sales code</th>
+          <th scope="col">Item code</th>
+          <th scope="col">Category</th>
+          <th scope="col">Item name</th>
+          <th scope="col">Item price</th>
+          <th scope="col">Sales date</th>
+          <th scope="col">Amount</th>
+        <th scope="col">Total sales</th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody id="listbody">
+    </tbody>
+  </table>
+
+
+<!-- footer -->
+<footer class="header">
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+
+<script src="../js/call.js"></script>
+
+<!-- ここからfirebase & script -->
+<script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyCgZAqi3YGI2B2k5bWU3j_IHZa11ql_J_I",
+          databaseURL: "https://gsdemo-2619a-default-rtdb.asia-southeast1.firebasedatabase.app",
+          authDomain: "gsdemo-2619a.firebaseapp.com",
+          projectId: "gsdemo-2619a",
+          storageBucket: "gsdemo-2619a.appspot.com",
+          messagingSenderId: "887499708285",
+          appId: "1:887499708285:web:2855d668063b9c9bf69e14",
+          measurementId: "G-2BV53M4HLK"
+        };
+     
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+    
+        import { collection, addDoc, setDoc, doc, Timestamp, updateDoc, getDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+    
+        const querySnapshot = await getDocs(collection(db, "Sales"));
+
+
+        querySnapshot.forEach((doc) => {
+            let table = document.getElementById('mainlist');
+            let row = table.insertRow(-1);
+            row.innerHTML=`
+            <tr>
+            <th scope="row">${doc.id}</th>
+            <td>${doc.data().itemcode}</td>
+            <td>${doc.data().category}</td>
+            <td>${doc.data().itemname}</td>
+            <td>${doc.data().itemprice}</td>
+            <td>${doc.data().salesdate}</td>
+            <td>${doc.data().salesamount}</td>
+            <td>${doc.data().salesTotal}</td>
+            </tr>`
+        });
+
+        
+//CSV出力＆ダウンロード
+const download = document.getElementById("download");
+
+download.addEventListener('click',()=>{
+    let bom = new Uint8Array([0xEF, 0xBB, 0xBF]); 
+    let table = document.getElementById('mainlist'); 
+    let data_csv=""; 
+    
+    for(let i = 0;  i < table.rows.length; i++) {
+        for(let j = 0; j < table.rows[i].cells.length; j++) {
+            data_csv += table.rows[i].cells[j].innerText;
+            if(j == table.rows[i].cells.length-1) data_csv += "\n";
+            else data_csv += ","; 
+        }
+    }
+    console.log(data_csv);
+    
+    const filename = "download.csv";
+    let blob = new Blob([ bom, data_csv], { "type" : "text/csv" }); //data_csvのデータをcsvとしてダウンロードする関数
+
+    const url = (window.URL || window.webkitURL).createObjectURL(blob);
+        //ダウンロード用にリンクを作成する
+        const download = document.createElement("a");
+        //リンク先に上記で生成したURLを指定する
+        download.href = url;
+        //download属性にファイル名を指定する
+        download.download = filename;
+        //作成したリンクをクリックしてダウンロードを実行する
+        download.click();
+        //createObjectURLで作成したオブジェクトURLを開放する
+        (window.URL || window.webkitURL).revokeObjectURL(url);
+
+});
+
+
+</script> 
+</body>
+</html>

@@ -1,0 +1,79 @@
+*{
+    font-family: 'Nunito', sans-serif;
+    line-height: 1.4rem;
+}
+
+/* headerここから */
+.header{
+    margin: auto;
+    height: 8vh;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color:black;
+}
+.homelink{
+    text-decoration: none;
+    color: white;
+    background-color: black;
+    font-size: 14px;
+    border-radius: 3px;
+    box-shadow: 1px 1px 0 0 grey;
+    padding: 0.3rem;
+}
+.headerleft{
+    width: 40%;
+}
+.headerleft p{
+    color: white;
+}
+.person{
+    border: none;
+    margin-left: 10px;
+}
+.headerright{
+    width: 55%;
+    display: flex;
+    justify-content: end;
+    gap: 10px;
+    padding-right: 10px;
+}
+.nav__wrapper{
+    display: flex;
+    gap: 20px;
+    justify-content: start;
+}
+.nav__item{
+    list-style: none;
+    font-size: 12px;
+}   
+.nav__wrapper a{
+    text-decoration: none;
+    color: white;
+}
+.input{
+    width: 35vw;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: 1px solid rgb(194, 192, 192);
+}
+.submit,.photo{
+    background-color: rgb(13, 13, 14);
+    font-size: 14px;
+    padding: 0.2em;
+    color: white;
+    border-radius: 3px;
+    box-shadow: 1px 1px 0 0 rgb(153, 153, 165);
+}
+.submit:hover,.photo:hover{
+    opacity: 0.8;
+}
+.undertext3{
+    text-align: center;
+    font-size: 10px;
+    margin: 0 0 10px 0;
+    font-weight: 100;
+}
+/* headerここまで */

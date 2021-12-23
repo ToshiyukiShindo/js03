@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/itemEntry.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <title>Document</title>
+</head>
+<body>
+    <header class="header">
+        <div class="headerleft">
+            <p>商品販売登録</p>
+        </div>
+        <div class="headerright">
+            <nav class="nav">
+                <ul class="nav__wrapper">
+                  <li class="nav__item"><a href="../html/itemList.html">商品一覧</a></li>
+                  <li class="nav__item"><a href="../html/itemEntry.html">商品情報登録</a></li>
+                  <li class="nav__item"><a href="../html/sales.html">商品販売履歴</a></li>
+                  <li class="nav__item"><a href="../html/salesEntry.html">商品販売登録</a></li>
+                  <li class="nav__item"><a href="../html/inquery.html">お問い合わせ</a></li>
+                </ul>
+              </nav>      
+        </div>
+    </header>
+    <p class="undertext">商品の販売情報の登録を行います。</p>
+    <hr class="headerbottom">    
+
+<!-- ここから本編 -->
+<p class="call" id="call"></p>
+<div class="maintable">
+    <table class="maintablebd">
+        <tr class="salescode">
+            <td class="tableleft" id="salescodeleft">Sales code　<span class="icon">必須</span></td>
+            <td class="tableright" id="salescoderight"><input type="text" class="salescode" id="salescode" placeholder="sales_01">
+        </td>
+        <tr class="code">
+            <td class="tableleft" id="codeleft">Item code　<span class="icon">必須</span></td>
+            <td class="tableright" id="coderight"><input type="text" class="code" id="code" placeholder="item_01">
+                <a class="confirm" id="set">set</a>
+        </td>
+        <tr class="category">
+            <td class="tableleft" id="categoryleft">Item category</td>
+            <td class="tableright" id="categoryright"><input type="text" class="category" id="category" disabled></td>
+        <tr class="name">
+            <td class="tableleft" id="nameleft">商品名</td>
+            <td class="tableright" id="nameright"><input type="text" class="name" id="name" disabled></td>
+        </tr>
+        <tr class="price">
+            <td class="tableleft" id="priceleft">価格</td>
+            <td class="tableright" id="priceright"><input type="number" class="price" id="price" disabled></td>
+        </tr>
+        <tr class="salesdate">
+            <td class="tableleft" id="dateleft">販売日
+            <td class="tableright" id="dateright"><input type="date" class="date" id="date"></td>
+        </tr>
+        <tr class="salesamount">
+            <td class="tableleft" id="amountleft">数量
+            <td class="tableright" id="amountright"><input type="number" class="amount" id="amount"></td>
+        </tr>
+        <tr class="totalsales">
+            <td class="tableleft" id="totalleft">販売合計
+            <td class="tableright" id="totalright"><input type="number" class="total" id="total" disabled></td>
+        </tr>
+    </table>
+</div>
+<div class="btnarea">
+    <a class="confirm" id="confirm">save</a>
+    <a class="reset" id="reset">reset</a>
+</div>
+<p class="undertext3">※Saveボタンを押していただいたタイミングで入力されたデータが登録されます。</p>
+    <footer class="header">
+    </footer>
+
+<script src="../js/call.js"></script>
+<!--ここからFirebase & 他script -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCgZAqi3YGI2B2k5bWU3j_IHZa11ql_J_I",
+  databaseURL: "https://gsdemo-2619a-default-rtdb.asia-southeast1.firebasedatabase.app",
+  authDomain: "gsdemo-2619a.firebaseapp.com",
+  projectId: "gsdemo-2619a",
+  storageBucket: "gsdemo-2619a.appspot.com",
+  messagingSenderId: "887499708285",
+  appId: "1:887499708285:web:2855d668063b9c9bf69e14",
+  measurementId: "G-2BV53M4HLK"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+
+
+const salesCode = document.getElementById('salescode');
+const itemCode2 = document.getElementById('code');
+const itemCategory2 = document.getElementById('category');
+const itemName2 = document.getElementById('name');
+const itemPrice2 = document.getElementById('price');
+const salesDate = document.getElementById('date');
+const salesAmount = document.getElementById('amount');
+const salesTotal = document.getElementById('total');
+const setBtn2 = document.getElementById('set');
+const saveBtn2 = document.getElementById('confirm');
+const resetBtn2 = document.getElementById('reset');
+
+import { collection, addDoc, setDoc, doc, Timestamp, updateDoc, getDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+
+const docRef = doc(db, "Item", "item_15");
+const docSnap = await getDoc(docRef);
+
+setBtn2.addEventListener('click',()=>{
+    if (docSnap.exists() && itemCode2 !== "") {
+      itemCategory2.value = docSnap.data().category;
+      itemName2.value = docSnap.data().itemname;
+      itemPrice2.value = docSnap.data().itemprice;
+    } else {
+      console.log("No such document!");
+    }
+});
+
+salesAmount.addEventListener('input',()=>{
+    if(salesAmount !== "" && itemPrice2 !== ""){
+        let amount3 = salesAmount.value;
+        let price3 = docSnap.data().itemprice; 
+        salesTotal.value = amount3*price3;
+    };
+});
+
+saveBtn2.addEventListener('click',()=>{
+const docData3 = {
+    itemcode: `${itemCode2.value}`,
+    category: `${itemCategory2.value}`,
+    itemname: `${itemName2.value}`,
+    itemprice: `${itemPrice2.value}`,
+    salesdate: `${salesDate.value}`,
+    salesamount: `${salesAmount.value}`,
+    salesTotal: `${salesTotal.value}`
+}
+setDoc(doc(db, "Sales", `${salesCode.value}`), docData3);
+});
+
+resetBtn2.addEventListener('click',()=>{
+    salesCode.value = "";
+    itemCode2.value = "";
+    itemName2.value = "";
+    itemPrice2.value = "";
+    salesDate.value = "";
+    salesAmount.value = "";
+    salesTotal.value = "";
+});
+
+    </script>
+</body>
+</html>
